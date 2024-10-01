@@ -1,10 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, StringField, SelectField, validators
-from flask_wtf.file import FileField, MultipleFileField
+from wtforms import SubmitField, StringField, SelectField, validators, TextAreaField
+from flask_wtf.file import FileField
 
 class ProfileForm(FlaskForm):
     title = StringField(label="Enter Profile Title", validators=[validators.DataRequired("Required")])
-    description = StringField(label="Enter Profile Description", validators=[validators.DataRequired("Required")])
     category = SelectField(label="Select Profile Category", validators=[validators.DataRequired("Required")])
     respublika = SelectField(label="Select Profile Respublika", validators=[validators.DataRequired("Required")])
     viloyat = SelectField(label="Select Profile Viloyat", validators=[validators.DataRequired("Required")])
@@ -24,4 +23,5 @@ class ProfileImageForm(FlaskForm):
     img8 = FileField(label="Enter Profile Image")
     img9 = FileField(label="Enter Profile Image")
     img10 = FileField(label="Enter Profile Image")
-    submit = SubmitField(label="Submit")
+    description = TextAreaField(label="Enter Profile Description")
+    submit = SubmitField(label="Edit")

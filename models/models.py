@@ -73,7 +73,7 @@ class Profile(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
 
     title = db.Column(db.String(length=100), nullable=False)
-    description = db.Column(db.String(length=300), nullable=False)
+    description = db.Column(db.String(length=300))
     image = db.Column(db.String(length=300), nullable=False)
     category_id = db.Column(db.Integer(), db.ForeignKey("profile_category.id"))
     respublika = db.Column(db.String(length=300))
@@ -87,11 +87,11 @@ class Profile(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True), default=datetime.now())
     updated_by = db.Column(db.Integer(), db.ForeignKey("user.id"))
     
-    def __init__(self, title: str, description: str, respublika: str, viloyat: str, tuman: str, street: str, category_id: int, created_by: int) -> None:
+    def __init__(self, title: str, respublika: str, viloyat: str, tuman: str, street: str, category_id: int, created_by: int) -> None:
         super().__init__()
         self.title = title
-        self.description = description
         self.respublika = respublika
+        self.description = ""
         self.viloyat = viloyat
         self.tuman = tuman
         self.street = street

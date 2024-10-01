@@ -2,6 +2,7 @@ import os
 from app import root
 from models import models
 from datetime import datetime
+from calendar import monthrange
 from forms.profile_form import ProfileForm, ProfileImageForm
 from werkzeug.utils import secure_filename
 from flask import render_template, redirect, url_for
@@ -69,7 +70,7 @@ def profile_get_page(id) -> render_template:
         img8 = form.img8.data
         img9 = form.img9.data
         img10 = form.img10.data
-
+        description = form.description.data
         if image:
             filename = secure_filename(image.filename)
             profile.image = "/uploads/" + filename
@@ -145,16 +146,22 @@ def profile_get_page(id) -> render_template:
             profile_img10.image = "/uploads/" + filename10
             models.db.session.commit()
             img10.save(os.path.join(root.config["UPLOAD_FOLDER"], filename10))
+        
+        if description:
+            profile.description = description
+            models.db.session.commit()
+
         return redirect(url_for("profile_get_page", id=profile.id))
+    form.description.data = profile.description
     return render_template("profile-get.html", form=form, profile=profile, profile_images=profile_i, p_count=profile_count, calendar_list=calendars, month_name=month_name, respublika_list=respublika_l, viloyat_list=viloyat_l, tuman_list=tuman_l)
 
 @root.route("/profile/create", methods=["GET", "POST"])
 @login_required
 def profile_create_page() -> render_template:
-    respublika_l = models.Respublika.query.filter_by(is_deleted=False).all()
-    viloyat_l = models.Viloyat.query.filter_by(is_deleted=False).all()
-    tuman_l = models.Tuman.query.filter_by(is_deleted=False).all()
-    category_l = models.ProfileCategory.query.filter_by(is_deleted=False).all()
+    respublika_l = models.Respublika.query.filter_by(is_deleted=False).order_by(models.Respublika.id).all()
+    viloyat_l = models.Viloyat.query.filter_by(is_deleted=False).order_by(models.Viloyat.id).all()
+    tuman_l = models.Tuman.query.filter_by(is_deleted=False).order_by(models.Tuman.id).all()
+    category_l = models.ProfileCategory.query.filter_by(is_deleted=False).order_by(models.ProfileCategory.order).all()
     category_names = []
     for category in category_l:
         category_names.append(category.title)
@@ -174,7 +181,6 @@ def profile_create_page() -> render_template:
     form.tuman.choices = tuman_names
     if form.validate_on_submit():
         title = form.title.data
-        description = form.description.data
         category = form.category.data
         respublika = form.respublika.data
         viloyat = form.viloyat.data
@@ -182,7 +188,7 @@ def profile_create_page() -> render_template:
         street = form.street.data
         
         category = models.ProfileCategory.query.filter_by(title=category, is_deleted=False).first()
-        profile = models.Profile(title, description, respublika, viloyat, tuman, street, category.id, current_user.id)
+        profile = models.Profile(title, respublika, viloyat, tuman, street, category.id, current_user.id)
         models.db.session.add(profile)
         profile.image = "/uploads/profile_image.jpg"
         models.db.session.commit()
@@ -195,90 +201,18 @@ def profile_create_page() -> render_template:
             models.db.session.add(p_im)
             models.db.session.commit()
 
-        cal = models.Calendar.query.filter_by(profile_id=None, created_by=current_user.id, is_deleted=False).all()
-        for c in cal:
-            c.profile_id = profile.id
-            models.db.session.commit()
+        for i in range(0, 7):
+            now = datetime.now()
+            if (now.month + i) == 13:
+               break
+            curr_now = datetime(now.year, now.month + i, now.day, now.hour, now.minute, now.second, now.microsecond)
+            day_count = monthrange(curr_now.year, curr_now.month)
+            month_name = curr_now.strftime("%B")
+            for d_count in range(1, day_count[1]+1):
+                calendar = models.Calendar(profile.id, d_count, month_name, True, current_user.id)
+                models.db.session.add(calendar)
+                models.db.session.commit()
         return redirect(url_for("profile_get_page", id=profile.id))
     else:
         category_l = models.ProfileCategory.query.filter_by(is_deleted=False).all()
         return render_template("servisman.html", form=form, respublika_list=respublika_l, viloyat_list=viloyat_l, tuman_list=tuman_l)
-
-@root.route("/profile/edit/<id>", methods=["GET", "POST"])
-@login_required
-def profile_edit_page(id) -> render_template:
-    respublika_l = models.Respublika.query.filter_by(is_deleted=False).all()
-    viloyat_l = models.Viloyat.query.filter_by(is_deleted=False).all()
-    tuman_l = models.Tuman.query.filter_by(is_deleted=False).all()
-    category_l = models.ProfileCategory.query.filter_by(is_deleted=False).all()
-
-    category_names = []
-    for category in category_l:
-        category_names.append(category.title)
-
-    respublika_names = []
-    for respublika in respublika_l:
-        respublika_names.append(respublika.text)
-
-    viloyat_names = []
-    for viloyat in viloyat_l:
-        viloyat_names.append(viloyat.text)
-
-    tuman_names = []
-    for tuman in tuman_l:
-        tuman_names.append(tuman.text)
-    form = ProfileForm()
-    form.category.choices = category_names
-    form.respublika.choices = respublika_names
-    form.viloyat.choices = viloyat_names
-    form.tuman.choices = tuman_names
-    if form.validate_on_submit():
-        profile = models.Profile.query.filter_by(id=id, is_deleted=False).first()
-        title = form.title.data
-        description = form.description.data
-        image = form.image.data
-        category = form.category.data
-        images = form.images.data
-        respublika = form.respublika.data
-        viloyat = form.viloyat.data
-        tuman = form.tuman.data
-        street = form.street.data
-        
-        filename = secure_filename(image.filename)
-        category = models.ProfileCategory.query.filter_by(title=category, is_deleted=False).first()
-        profile.title = title
-        profile.description = description
-        profile.respublika = respublika
-        profile.tuman = tuman
-        profile.street = street
-        profile.viloyat = viloyat
-        profile.image = "/uploads/"+filename
-        profile.category_id = category.id
-        models.db.session.commit()
-
-        image.save(os.path.join(root.config["UPLOAD_FOLDER"], filename))
-        profile_image_delete = models.ProfileImage.query.filter_by(profile_id=profile.id, is_deleted=False).all()
-        for img_d in profile_image_delete:
-            img_d.is_deleted = True
-            models.db.session.add(img_d)
-            models.db.session.commit()
-        for im in images:
-            filename = secure_filename(im.filename)
-            p_im = models.ProfileImage("/uploads/"+filename, profile.id, current_user.id)
-            models.db.session.add(p_im)
-            models.db.session.commit()
-    
-            im.save(os.path.join(root.config["UPLOAD_FOLDER"], filename))
-
-        return redirect(url_for("profile_get_page", id=profile.id))
-    else:
-        profile = models.Profile.query.filter_by(id=id, is_deleted=False).first()
-        form.title.data = profile.title
-        form.description.data = profile.description
-        category = models.ProfileCategory.query.filter_by(id=profile.category_id, is_deleted=False).first()
-        form.category.data = category.title
-        form.respublika.data = profile.respublika
-        form.viloyat.data = profile.viloyat
-        form.tuman.data = profile.tuman
-        form.street.data = profile.street
-        return render_template("profile-edit.html", form=form)

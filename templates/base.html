@@ -14,6 +14,10 @@
 
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
@@ -31,7 +35,7 @@
       <button class="navbar-toggler" style="border: 1px solid white;" type="button" data-toggle="collapse"
         data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
         aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon">
+        <span class="navbar-toggler-icon"> 
         </span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -48,29 +52,29 @@
           <li class="nav-item" style="width: 45px; height: 40px;">
             {% if current_user.is_authenticated %}
             {% if current_user.type == 'Employee' %}
-            <a class="nav-link btn navbar-custom-btn" href="{{ url_for('profile_create_page') }}"
+            <a class="nav-link btn navbar-custom-btn d-flex align-items-center justify-content-center" href="{{ url_for('profile_create_page') }}"
               style="width: 100%; height: 100%; padding: 0;">
-              <img src="{{ url_for('static', filename='img/plus.png') }}" alt="plus"
-                style="width: 60%; height: 60%; margin-top: 7px;">
+              <i class="fa-solid fa-plus h3 m-0" style="color: #52796f;"></i>
+              <!-- <img src="{{ url_for('static', filename='img/plus.png') }}" alt="plus" width="20px" height="20px"> -->
             </a>
             {% else %}
-            <a class="nav-link btn navbar-custom-btn" href="{{ url_for('home_page') }}"
-            style="width: 100%; height: 100%; padding: 0;">
-            <img src="{{ url_for('static', filename='img/plus.png') }}" alt="plus"
-              style="width: 60%; height: 60%; margin-top: 7px;">
-          </a>
+            <a class="nav-link btn navbar-custom-btn d-flex align-items-center justify-content-center" href="{{ url_for('home_page') }}"
+              style="width: 100%; height: 100%; padding: 0;">
+              <i class="fa-solid fa-plus h3 m-0" style="color: #52796f;"></i>
+               <!-- <img src="{{ url_for('static', filename='img/plus.png') }}" alt="plus" width="20px" height="20px"> -->
+            </a>
             {% endif %}
             {% else %}
-            <a class="nav-link btn navbar-custom-btn" href="{{ url_for('login_page') }}"
+            <a class="nav-link btn navbar-custom-btn d-flex align-items-center justify-content-center" href="{{ url_for('login_page') }}"
               style="width: 100%; height: 100%; padding: 0;">
-              <img src="{{ url_for('static', filename='img/plus.png') }}" alt="plus"
-                style="width: 60%; height: 60%; margin-top: 7px;">
+              <i class="fa-solid fa-plus h3 m-0" style="color: #52796f;"></i>
+              <!-- <img src="{{ url_for('static', filename='img/plus.png') }}" alt="plus" width="20px" height="20px"> -->
             </a>
             {% endif %}
           </li>
-          <li class="nav-item dropdown" style="width: 90px; height: 40px;">
-            <a class="nav-link dropdown-toggle navbar-custom-btn rounded" href="#" id="navbarDropdown" role="button"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <li class="nav-item dropdown" style="width: 90px; height: 40px; ">
+            <a style="color: #52796f;" class="nav-link dropdown-toggle navbar-custom-btn rounded" href="#"
+              id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Регион
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -105,22 +109,24 @@
             </div>
           </li>
           <li class="nav-item dropdown" style="width: 65px; height: 40px;">
-            <a class="nav-link dropdown-toggle navbar-custom-btn rounded" href="#" id="navbarDropdown" role="button"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a style="color: #52796f;" class="nav-link dropdown-toggle navbar-custom-btn rounded" href="#"
+              id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Ўзб
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Рус</a>
-              <a class="dropdown-item" href="#">Ўзб</a>
+              <a style="color: #52796f;" class="dropdown-item" href="#">Рус</a>
+              <a style="color: #52796f;" class="dropdown-item" href="#">Ўзб</a>
             </div>
           </li>
           {% if current_user.is_authenticated %}
           <li class="nav-item" style="width: 70px; height: 40px;">
-            <a class="nav-link btn navbar-custom-btn" href="{{ url_for('logout_page') }}">Чиқиш</a>
+            <a style="color: #52796f;" class="nav-link btn navbar-custom-btn"
+              href="{{ url_for('logout_page') }}">Чиқиш</a>
           </li>
           {% else %}
           <li class="nav-item" style="width: 70px; height: 40px;">
-            <a class="nav-link btn navbar-custom-btn" href="{{ url_for('login_page') }}">Кириш</a>
+            <a style="color: #52796f;" class="nav-link btn navbar-custom-btn"
+              href="{{ url_for('login_page') }}">Кириш</a>
           </li>
           {% endif %}
         </ul>
@@ -132,7 +138,7 @@
 
     {% endblock %}
   </main>
-  <footer>
+  <footer class="position-fixed w-100" style="bottom: 0;">
     <section class="footer-box active mt-5">
       <div class="open-icon active position-absolute">
         <img src="{{ url_for('static', filename='img/up.svg') }}" width="24" height="24" alt="">
@@ -175,7 +181,7 @@
       paginationSpeed: 800,
       autoPlay: true, // Autoplayni yoqamiz
       autoPlayTimeout: 3000, // 3 soniya (3000 millisekund)
-      navigationText: ["prev","next"],
+      navigationText: ["prev", "next"],
       items: 3,
       goToFirstSpeed: 1000,
       itemsDesktop: [1199, 1],

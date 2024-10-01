@@ -17,6 +17,7 @@ def register_page() -> render_template:
             user = models.User(full_name, phone, type, password, 'UZ', 'USER', -1)
             models.db.session.add(user)
             models.db.session.commit()
+            login_user(user)
             flash("Successfully registered!", category="success")
             return redirect(url_for("home_page"))
         else:
